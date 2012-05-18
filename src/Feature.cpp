@@ -12,8 +12,6 @@ using std::string;
 
 namespace GFF
 {
-    vector<string> default_exon_types = boost::assign::list_of("exon");
-
     Feature::Feature(void)
     {
         seqid = ".";
@@ -79,37 +77,29 @@ namespace GFF
         return end - start + 1;
     }
 
-    bool Feature::spliceJunctions(vector<Feature>& juncs, vector<string>& exon_type_names)
+    bool spliceJunctions(vector<Feature>& exons, vector<Feature>& juncs)
     {
-        TypeIndex types;
-        types.add(children.begin(), children.end());
-
-        vector<Feature> exons;
-        for (vector<string>::iterator it = exon_type_names.begin();
-             it != exon_type_names.end(); ++it)
-        {
-            types.type(*it, exons);
-        }
-
         PositionComparison compare_by_position;
         std::sort(exons.begin(), exons.end(), compare_by_position);
 
         if (exons.size() < 2) return false;
 
         Feature f;
-        f.seqid = seqid;
-        f.source = source;
         f.type = "splice_junction";
-        f.strand = strand;
 
-        vector<Feature>::iterator it = exons.begin();
-        while (it != exons.end())
+        vector<Feature>::iterator exon = exons.begin();
+        while (exon != exons.end())
         {
-            f.start = it->end;
-            ++it;
-            if (it != exons.end())
+            f.seqid = exon->seqid;
+            f.source = exon->source;
+            f.strand = exon->strand;
+            f.start = exon->end;
+
+            ++exon;
+
+            if (exon != exons.end())
             {
-                f.end = it->start;
+                f.end = exon->start;
                 juncs.push_back(f);
             }
         }

@@ -5,8 +5,6 @@
 #include <map>
 #include <vector>
 
-#include <boost/assign/list_of.hpp>
-
 #include "Attributes.h"
 
 using std::string;
@@ -14,8 +12,6 @@ using std::vector;
 
 namespace GFF
 {
-    extern vector<string> default_exon_types;
-
     class Feature
     {
         public:
@@ -41,7 +37,6 @@ namespace GFF
             bool hasScore(void);
             double getScore(void);
             int getLength(void);
-            bool spliceJunctions(vector<Feature>&, vector<string>& = default_exon_types);
             // TODO string toString( void );
 
             bool initFromGFF(string&);
@@ -57,5 +52,7 @@ namespace GFF
                        && a.end < b.end);
         }
     };
+
+    bool spliceJunctions(vector<Feature>& exons, vector<Feature>& junctions);
 }
 #endif
